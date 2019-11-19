@@ -38,57 +38,66 @@ echo
     </style>
 </head>
 ';
-$bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
-$reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC");
-if(isset($_GET['id'])) {
-    $deleteIP = $bdd->prepare("DELETE FROM ip_list WHERE id = ?");
-    $deleteIP->execute(array($_GET['id']));
-}
-while($donneesaa = $reqabcd->fetch()) {
-    $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
-    $json = json_decode($jsonfile);
-echo '
+if(isset($_SESSION['id'])) {
+    $bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
+    $reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC");
+    if(isset($_GET['id'])) {
+        $deleteIP = $bdd->prepare("DELETE FROM ip_list WHERE id = ?");
+        $deleteIP->execute(array($_GET['id']));
+    }
+    while($donneesaa = $reqabcd->fetch()) {
+        $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
+        $json = json_decode($jsonfile);
+    echo '
 
-<div class="col-sm-3">
-    <div class="card">
-        <div class="card-header">'. date('d/m/Y H:i:s', $donneesaa['date']) .'</div>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo'. $donneesaa['id'] .'">Debug</button>
-            <div id="demo'. $donneesaa['id'] .'" class="collapse">
-            '. $donneesaa['navigateur'] .'
+    <div class="col-sm-3">
+        <div class="card">
+            <div class="card-header">'. date('d/m/Y H:i:s', $donneesaa['date']) .'</div>
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo'. $donneesaa['id'] .'">Debug</button>
+                <div id="demo'. $donneesaa['id'] .'" class="collapse">
+                '. $donneesaa['navigateur'] .'
+                </div>
+            <br><br>
+            ';
+            if($json->{'status'} == "success") {
+                print $json->{'regionName'};
+                echo '
+                <br>
+                ';
+                print $json->{'city'};
+                echo '
+                <br>
+                ';
+                print $json->{'zip'};
+                echo '
+                <br>
+                ';
+                print $json->{'as'};
+            } else {
+                echo 'Error IPV6';
+            }
+            echo '
             </div>
-        <br><br>
-        ';
-        if($json->{'status'} == "success") {
-            print $json->{'regionName'};
-            echo '
-            <br>
-            ';
-            print $json->{'city'};
-            echo '
-            <br>
-            ';
-            print $json->{'zip'};
-            echo '
-            <br>
-            ';
-            print $json->{'as'};
-        } else {
-            echo 'Error IPV6';
-        }
-        echo '
-        </div>
-        <div class="card-footer">'. $donneesaa['ip'] .'
-        <br><br>
-        <form action="" method="GET">
-            <input type="hidden" name="id" value="'. $donneesaa['id'] .'">
-            <button type="submit" class="btn btn-primary">Supprimer</button>
-        </form>
+            <div class="card-footer">'. $donneesaa['ip'] .'
+            <br><br>
+            <form action="" method="GET">
+                <input type="hidden" name="id" value="'. $donneesaa['id'] .'">
+                <button type="submit" class="btn btn-primary">Supprimer</button>
+            </form>
+            </div>
         </div>
     </div>
-</div>
 
-';
+    ';
+    }
+    $reqabcd->closeCursor();
+} else {
+    echo '
+    <div class="col-sm-3">
+        <div class="card">
+        </div>
+    </div>
+    '
 }
-$reqabcd->closeCursor();
 ?>
