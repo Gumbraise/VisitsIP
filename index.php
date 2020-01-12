@@ -35,19 +35,50 @@ echo
         .btn:hover {
             background-color: #006200;
         }
+        .judu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            color: #00a700
+        }
+        .nope {
+            display:none
+        }
     </style>
 </head>
 ';
+if(isset($_POST['logout'])) {
+    $_SESSION = array();
+    session_destroy();
+}
+if(isset($_POST['login'])) {
+    if(!empty($_POST['password'])) {
+        if($_POST['password'] == "visits_ip_by_gumbraise") {
+            $_SESSION['id'] = 1;
+        }
+    }
+}
 if(isset($_SESSION['id'])) {
     $bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
     $reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC");
+
+    $jsonfileinsert = file_get_contents('http://ip-api.com/json/'.$_SERVER['REMOTE_ADDR']);
+    $insertmbr3 = $bdd->prepare('INSERT INTO ip_list(ip, navigateur, date, json) VALUES(?, ?, UNIX_TIMESTAMP(), ?)');
+    $insertmbr3->execute(array($_SERVER['REMOTE_ADDR'], $_SERVER["HTTP_USER_AGENT"], $jsonfileinsert));
+
     if(isset($_GET['id'])) {
         $deleteIP = $bdd->prepare("DELETE FROM ip_list WHERE id = ?");
         $deleteIP->execute(array($_GET['id']));
     }
+    echo '<h3 style="text-align: center"><form action="" method="POST" name="logout"><input type="submit" value="Déconnexion" name="logout"></form></h3>';
     while($donneesaa = $reqabcd->fetch()) {
-        $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
-        $json = json_decode($jsonfile);
+        $json = json_decode($donneesaa['json']);
     echo '
 
     <div class="col-sm-3">
@@ -75,7 +106,10 @@ if(isset($_SESSION['id'])) {
                 ';
                 print $json->{'as'};
             } else {
-                echo 'Error IPV6';
+                $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
+                $bdd = new PDO('mysql:host=db5000217374.hosting-data.io;dbname=dbs212220', 'dbu337316', 'BDDp@stropsecur69');
+                $insertmbr = $bdd->prepare('UPDATE ip_list SET json = ? WHERE id = ?');
+                $insertmbr->execute(array($jsonfile, $donneesaa['id']));            
             }
             echo '
             </div>
@@ -94,10 +128,12 @@ if(isset($_SESSION['id'])) {
     $reqabcd->closeCursor();
 } else {
     echo '
-    <div class="col-sm-3">
-        <div class="card">
-        </div>
+    <div class="col-sm-3 judu">
+        <form action="" method="POST" name="login">
+            <input style="color:#00a700; background-color: #000; border:none" type="password" name="password" placeholder="Password">
+            <button class="nope" type="submit" name="login"></button>
+        </form>
     </div>
-    '
+    ';
 }
 ?>

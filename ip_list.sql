@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  db5000217374.hosting-data.io
--- Généré le :  Dim 17 Novembre 2019 à 19:33
--- Version du serveur :  5.7.27-log
+-- Généré le :  Dim 12 Janvier 2020 à 12:55
+-- Version du serveur :  5.7.28-log
 -- Version de PHP :  7.0.33-0+deb9u6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données :  `visits_ip`
+-- Base de données :  `dbs212220`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,8 @@ CREATE TABLE `ip_list` (
   `id` int(255) NOT NULL,
   `ip` varchar(25) NOT NULL,
   `navigateur` varchar(255) NOT NULL,
-  `date` int(15) NOT NULL
+  `date` int(15) NOT NULL,
+  `json` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
