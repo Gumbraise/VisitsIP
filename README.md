@@ -14,10 +14,11 @@ phpMyAdmin >= 4.8<br>
 Follow these steps:
 
 1. Download the last zip or make execute the command ``git clone https://github.com/Gumbraise/PaladiumWeb``
-2. Drop all files in your server root
+2. Drop ``index.php`` in your server root and ``script.php`` à la tête de votre page par défaut.
 3. Go to phpMyAdmin then click IMPORT in the menubar. A database will be created automatically 
 4. Go to your website. The installation is finished
 
+(Note: Mot de passe par défaut = ``visits_ip_by_gumbraise``)
 ## Donate
 
 If you want to help me in my work, consider donating. Thank you!
