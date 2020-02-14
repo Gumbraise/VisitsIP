@@ -1,4 +1,11 @@
 <?php
+if(isset($_POST['delete'])) {
+    $bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
+    $deleteIPs = $bdd2->prepare("DELETE FROM ip_list WHERE json = ?");
+    $deleteIPs->execute(array($_POST['delete']));
+    echo 'ok';
+}
+else {
 echo
 '<head>
     <meta charset="utf-8">
@@ -72,11 +79,16 @@ if(isset($_SESSION['id'])) {
     $insertmbr3 = $bdd->prepare('INSERT INTO ip_list(ip, navigateur, date, json) VALUES(?, ?, UNIX_TIMESTAMP(), ?)');
     $insertmbr3->execute(array($_SERVER['REMOTE_ADDR'], $_SERVER["HTTP_USER_AGENT"], $jsonfileinsert));
 
-    if(isset($_GET['id'])) {
+        if(isset($_GET['id'])) {
         $deleteIP = $bdd->prepare("DELETE FROM ip_list WHERE id = ?");
         $deleteIP->execute(array($_GET['id']));
     }
-    echo '<h3 style="text-align: center"><form action="" method="POST" name="logout"><input type="submit" value="Déconnexion" name="logout"></form></h3>';
+    echo '<h3 style="text-align: center"><form action="" method="POST" name="logout"><input type="submit" value="Déconnexion" name="logout"></form></h3>
+    <input type="text" placeholder="Remove">
+    <div>
+    ddddd
+    </div>
+    ';
     while($donneesaa = $reqabcd->fetch()) {
         $json = json_decode($donneesaa['json']);
     echo '
@@ -126,6 +138,36 @@ if(isset($_SESSION['id'])) {
     ';
     }
     $reqabcd->closeCursor();
+    echo '
+    <script type="text/javascript">
+        var input = document.getElementsByTagName("input")[1];
+        
+
+        input.onchange = function() {
+            var div = document.getElementsByTagName("div")[0];
+            div.innerHTML = "<div class=\"alert alert-warning\" role=\"alert\">Wait for it!</div>"
+
+            var formData = new FormData();
+            formData.set("delete", input.value);
+
+            var request2 = new XMLHttpRequest();
+            request2.open(\'POST\', \'pc.php\', true);
+            request2.send(formData);
+            request2.onreadystatechange = function()
+            {
+                if (request2.readyState === 4) {
+                    if (request2.responseText == \'ok\') {
+                        div.innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Removed!</div>"
+                    }
+                    else {
+                        div.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error has occurred</div>"
+                    }
+                }
+            }
+        }
+
+    </script>
+    ';
 } else {
     echo '
     <div class="col-sm-3 judu">
