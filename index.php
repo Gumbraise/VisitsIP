@@ -125,7 +125,7 @@ if(isset($_SESSION['id'])) {
             }
             echo '
             </div>
-            <div class="card-footer">'. $donneesaa['ip'] .'
+            <div class="card-footer">'. $donneesaa['ip'] ."<br>".$donneesaa['page'].'
             <br><br>
             <form action="" method="GET">
                 <input type="hidden" name="id" value="'. $donneesaa['id'] .'">
