@@ -73,7 +73,12 @@ if(isset($_POST['login'])) {
 }
 if(isset($_SESSION['id'])) {
     $bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
-    $reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC");
+    if (isset($_GET['e'])) {
+        $reqabcd = $bdd->prepare("SELECT * FROM ip_list WHERE page = ? ORDER BY date DESC LIMIT 100");
+        $reqabcd->execute(array($_GET['e']));
+    } else {
+        $reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC LIMIT 100");
+    }
 
     $jsonfileinsert = file_get_contents('http://ip-api.com/json/'.$_SERVER['REMOTE_ADDR']);
     $insertmbr3 = $bdd->prepare('INSERT INTO ip_list(ip, navigateur, date, json) VALUES(?, ?, UNIX_TIMESTAMP(), ?)');
@@ -86,7 +91,6 @@ if(isset($_SESSION['id'])) {
     echo '<h3 style="text-align: center"><form action="" method="POST" name="logout"><input type="submit" value="Déconnexion" name="logout"></form></h3>
     <input type="text" placeholder="Remove">
     <div>
-    ddddd
     </div>
     ';
     while($donneesaa = $reqabcd->fetch()) {
