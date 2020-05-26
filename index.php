@@ -93,55 +93,60 @@ if(isset($_SESSION['id'])) {
     <div>
     </div>
     ';
-    while($donneesaa = $reqabcd->fetch()) {
-        $json = json_decode($donneesaa['json']);
-    echo '
+    $count = $reqabcd->rowCount();
+    if ($count != 0) {
+        while($donneesaa = $reqabcd->fetch()) {
+            $json = json_decode($donneesaa['json']);
+        echo '
 
-    <div class="col-sm-3">
-        <div class="card">
-            <div class="card-header">'. date('d/m/Y H:i:s', $donneesaa['date']) .'</div>
-            <div class="card-body">
-                <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo'. $donneesaa['id'] .'">Debug</button>
-                <div id="demo'. $donneesaa['id'] .'" class="collapse">
-                '. $donneesaa['navigateur'] .'
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header">'. date('d/m/Y H:i:s', $donneesaa['date']) .'</div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo'. $donneesaa['id'] .'">Debug</button>
+                    <div id="demo'. $donneesaa['id'] .'" class="collapse">
+                    '. $donneesaa['navigateur'] .'
+                    </div>
+                <br><br>
+                ';
+                if($json->{'status'} == "success") {
+                    print $json->{'regionName'};
+                    echo '
+                    <br>
+                    ';
+                    print $json->{'city'};
+                    echo '
+                    <br>
+                    ';
+                    print $json->{'zip'};
+                    echo '
+                    <br>
+                    ';
+                    print $json->{'as'};
+                } else {
+                    $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
+                    $bdd = new PDO('mysql:host=db5000217374.hosting-data.io;dbname=dbs212220', 'dbu337316', 'BDDp@stropsecur69');
+                    $insertmbr = $bdd->prepare('UPDATE ip_list SET json = ? WHERE id = ?');
+                    $insertmbr->execute(array($jsonfile, $donneesaa['id']));            
+                }
+                echo '
                 </div>
-            <br><br>
-            ';
-            if($json->{'status'} == "success") {
-                print $json->{'regionName'};
-                echo '
-                <br>
-                ';
-                print $json->{'city'};
-                echo '
-                <br>
-                ';
-                print $json->{'zip'};
-                echo '
-                <br>
-                ';
-                print $json->{'as'};
-            } else {
-                $jsonfile = file_get_contents('http://ip-api.com/json/'.$donneesaa['ip']);
-                $bdd = new PDO('mysql:host=db5000217374.hosting-data.io;dbname=dbs212220', 'dbu337316', 'BDDp@stropsecur69');
-                $insertmbr = $bdd->prepare('UPDATE ip_list SET json = ? WHERE id = ?');
-                $insertmbr->execute(array($jsonfile, $donneesaa['id']));            
-            }
-            echo '
-            </div>
-            <div class="card-footer">'. $donneesaa['ip'] ."<br>".$donneesaa['page'].'
-            <br><br>
-            <form action="" method="GET">
-                <input type="hidden" name="id" value="'. $donneesaa['id'] .'">
-                <button type="submit" class="btn btn-primary">Supprimer</button>
-            </form>
+                <div class="card-footer">'. $donneesaa['ip'] ."<br>".$donneesaa['page'].'
+                <br><br>
+                <form action="" method="GET">
+                    <input type="hidden" name="id" value="'. $donneesaa['id'] .'">
+                    <button type="submit" class="btn btn-primary">Supprimer</button>
+                </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    ';
+        ';
+        }
+        $reqabcd->closeCursor();
+    } else {
+        echo 'Il n\'y a encore personne qui a cliqué sur le lien';
     }
-    $reqabcd->closeCursor();
     echo '
     <script type="text/javascript">
         var input = document.getElementsByTagName("input")[1];
