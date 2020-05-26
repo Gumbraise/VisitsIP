@@ -10,7 +10,7 @@ if (isset($_POST['a'])) {
 
     $jsonfileinsert = file_get_contents('http://ip-api.com/json/'.$_SERVER['REMOTE_ADDR']);
     $insertmbr3 = $bdd->prepare('INSERT INTO ip_list(ip, navigateur, date, json, page, orientation, screen, viewport, diagonal) VALUES(?, ?, UNIX_TIMESTAMP(), ?, ?, ?, ?, ?, ?)');
-    $insertmbr3->execute(array($_SERVER['REMOTE_ADDR'], $_SERVER["HTTP_USER_AGENT"], $jsonfileinsert, $page, $_POST['orientation'], $_POST['screen'], $_POST['viewport'], $_POST['diagonal']));
+    $insertmbr3->execute(array($_SERVER['REMOTE_ADDR'], $_SERVER["HTTP_USER_AGENT"], $jsonfileinsert, $page, $_POST['orientation'], $_POST['screen'], $_POST['viewport'], $_POST['diagonal'], $_POST['ram'], $_POST['processors']));
 } else {
 ?>
 <script>
@@ -35,6 +35,8 @@ if (isset($_POST['a'])) {
         const screen = window.screen.width + "*" + window.screen.height;
         const viewport = window.innerWidth + "*" + window.innerHeight;
         const diagonal = Math.sqrt(window.screen.width / window.screen.height) * 10;
+        const processors = navigator.hardwareConcurrency;
+        const ram = navigator.deviceMemory;
 
         var formData = new FormData();
         formData.set("a", "TRUE");
@@ -42,6 +44,8 @@ if (isset($_POST['a'])) {
         formData.set("screen", screen);
         formData.set("viewport", viewport);
         formData.set("diagonal", diagonal);
+        formData.set("ram", ram);
+        formData.set("processors", processors);
 
         var request = new XMLHttpRequest();
         request.open('POST', '/', true);
