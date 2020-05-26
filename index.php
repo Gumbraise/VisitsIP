@@ -15,6 +15,12 @@ echo
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
+    .collapse {
+        position: relative
+    }
+    .relative {
+        position: relative
+    }
         .col-sm-3 {
             display: block;
             float: left;
@@ -66,25 +72,21 @@ if(isset($_POST['logout'])) {
 }
 if(isset($_POST['login'])) {
     if(!empty($_POST['password'])) {
-        if($_POST['password'] == "visits_ip_by_gumbraise") {
+        if($_POST['password'] == "BDDp@stropsecur69") {
             $_SESSION['id'] = 1;
         }
     }
 }
 if(isset($_SESSION['id'])) {
     $bdd = new PDO('mysql:host=localhost;dbname=visits_ip', 'root', '');
+
     if (isset($_GET['e'])) {
         $reqabcd = $bdd->prepare("SELECT * FROM ip_list WHERE page = ? ORDER BY date DESC LIMIT 100");
         $reqabcd->execute(array($_GET['e']));
     } else {
         $reqabcd = $bdd->query("SELECT * FROM ip_list ORDER BY date DESC LIMIT 100");
     }
-
-    $jsonfileinsert = file_get_contents('http://ip-api.com/json/'.$_SERVER['REMOTE_ADDR']);
-    $insertmbr3 = $bdd->prepare('INSERT INTO ip_list(ip, navigateur, date, json) VALUES(?, ?, UNIX_TIMESTAMP(), ?)');
-    $insertmbr3->execute(array($_SERVER['REMOTE_ADDR'], $_SERVER["HTTP_USER_AGENT"], $jsonfileinsert));
-
-        if(isset($_GET['id'])) {
+    if(isset($_GET['id'])) {
         $deleteIP = $bdd->prepare("DELETE FROM ip_list WHERE id = ?");
         $deleteIP->execute(array($_GET['id']));
     }
@@ -104,10 +106,30 @@ if(isset($_SESSION['id'])) {
                 <div class="card-header">'. date('d/m/Y H:i:s', $donneesaa['date']) .'</div>
                 <div class="card-body">
                     <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo'. $donneesaa['id'] .'">Debug</button>
-                    <div id="demo'. $donneesaa['id'] .'" class="collapse">
-                    '. $donneesaa['navigateur'] .'
+                    <div id="demo'. $donneesaa['id'] .'" class="collapse"><br>
+                    <div class="row">
+                        <div class="col-sm">
+                            '. $donneesaa['navigateur'] .'
+                        </div>
+                        <div class="col-sm">
+                        Orientation:<br>
+                            '. $donneesaa['orientation'] .'<br>
+                            Résolution écran:<br>
+                            '. $donneesaa['screen'] .'<br>
+                            Résolution fenêtre:<br>
+                            '. $donneesaa['viewport'] .'<br>
+                            Nombre de procos:<br>
+                            '. $donneesaa['processors'];
+                            if ($donneesaa['ram'] != 'undefined') { echo'<br>
+                            RAM:<br>
+                            '. $donneesaa['ram'] .'GB';
+                            } echo
+                            '
+                        </div>
+                        </div>
                     </div>
                 <br><br>
+                <div class="relative">
                 ';
                 if($json->{'status'} == "success") {
                     print $json->{'regionName'};
@@ -130,6 +152,7 @@ if(isset($_SESSION['id'])) {
                     $insertmbr->execute(array($jsonfile, $donneesaa['id']));            
                 }
                 echo '
+                </div>
                 </div>
                 <div class="card-footer">'. $donneesaa['ip'] ."<br>".$donneesaa['page'].'
                 <br><br>
@@ -154,7 +177,7 @@ if(isset($_SESSION['id'])) {
 
         input.onchange = function() {
             var div = document.getElementsByTagName("div")[0];
-            div.innerHTML = "<div class=\"alert alert-warning\" role=\"alert\">Wait for it!</div>"
+            div.innerHTML = "<div class=\"alert alert-warning\" role=\"alert\">This is a warning alert—check it out!</div>"
 
             var formData = new FormData();
             formData.set("delete", input.value);
@@ -166,10 +189,10 @@ if(isset($_SESSION['id'])) {
             {
                 if (request2.readyState === 4) {
                     if (request2.responseText == \'ok\') {
-                        div.innerHTML = "<div class=\"alert alert-success\" role=\"alert\">Removed!</div>"
+                        div.innerHTML = "<div class=\"alert alert-success\" role=\"alert\">This is a warning alert—check it out!</div>"
                     }
                     else {
-                        div.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">An error has occurred</div>"
+                        div.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">This is a warning alert—check it out!</div>"
                     }
                 }
             }
@@ -186,5 +209,6 @@ if(isset($_SESSION['id'])) {
         </form>
     </div>
     ';
+}
 }
 ?>
