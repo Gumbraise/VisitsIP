@@ -48,7 +48,11 @@ if (isset($_POST['a'])) {
         formData.set("processors", processors);
 
         var request = new XMLHttpRequest();
-        request.open('POST', '/', true);
+        request.open('POST', '/?e=<?php if (isset($_GET['e'])) {
+        echo htmlspecialchars($_GET['e']);
+    } else {
+        echo $_SERVER['SCRIPT_NAME'];
+    }?>', true);
         request.send(formData);
         request.onreadystatechange = function() {}
 }
